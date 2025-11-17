@@ -1,18 +1,44 @@
-import { sql } from "drizzle-orm";
-import { pgTable, text, varchar } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+export interface ApiEndpoint {
+  id: string;
+  title: string;
+  method: string;
+  endpoint: string;
+  description: string;
+  category: string;
+  request: string;
+  response: string;
+  searchParams?: string[];
+}
+
+export interface ApiCategory {
+  id: string;
+  name: string;
+  description: string;
+  color: string;
+  endpoints: ApiEndpoint[];
+}
+
+export const apiEndpointSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  method: z.string(),
+  endpoint: z.string(),
+  description: z.string(),
+  category: z.string(),
+  request: z.string(),
+  response: z.string(),
+  searchParams: z.array(z.string()).optional(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+export const apiCategorySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  color: z.string(),
+  endpoints: z.array(apiEndpointSchema),
 });
 
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
+export type ApiEndpointType = z.infer<typeof apiEndpointSchema>;
+export type ApiCategoryType = z.infer<typeof apiCategorySchema>;
