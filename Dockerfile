@@ -1,4 +1,4 @@
-# Multi-stage Docker build for CommonWell API Documentation Viewer
+        # Multi-stage Docker build for CommonWell API Documentation Viewer
 
 # Stage 1: Build the application
 FROM node:20-alpine AS builder
